@@ -1,0 +1,72 @@
+diff -Naur a/src/core/nginx.h b/src/core/nginx.h
+--- a/src/core/nginx.h	2015-07-14 17:46:06.000000000 +0100
++++ b/src/core/nginx.h	2015-12-01 20:57:15.079018961 +0000
+@@ -10,16 +10,16 @@
+ 
+ 
+ #define nginx_version      1009003
+-#define NGINX_VERSION      "1.9.3"
+-#define NGINX_VER          "nginx/" NGINX_VERSION
++#define NGINX_VERSION      ""
++#define NGINX_VER          ""
+ 
+ #ifdef NGX_BUILD
+-#define NGINX_VER_BUILD    NGINX_VER " (" NGX_BUILD ")"
++#define NGINX_VER_BUILD    ""
+ #else
+-#define NGINX_VER_BUILD    NGINX_VER
++#define NGINX_VER_BUILD    ""
+ #endif
+ 
+-#define NGINX_VAR          "NGINX"
++#define NGINX_VAR          ""
+ #define NGX_OLDPID_EXT     ".oldbin"
+ 
+ 
+diff -Naur a/src/http/ngx_http_core_module.c b/src/http/ngx_http_core_module.c
+--- a/src/http/ngx_http_core_module.c	2015-07-14 17:46:06.000000000 +0100
++++ b/src/http/ngx_http_core_module.c	2015-12-01 20:17:25.039017822 +0000
+@@ -3895,7 +3895,7 @@
+     ngx_conf_merge_value(conf->log_subrequest, prev->log_subrequest, 0);
+     ngx_conf_merge_value(conf->recursive_error_pages,
+                               prev->recursive_error_pages, 0);
+-    ngx_conf_merge_value(conf->server_tokens, prev->server_tokens, 1);
++    ngx_conf_merge_value(conf->server_tokens, prev->server_tokens, 0);
+     ngx_conf_merge_value(conf->chunked_transfer_encoding,
+                               prev->chunked_transfer_encoding, 1);
+     ngx_conf_merge_value(conf->etag, prev->etag, 1);
+diff -Naur a/src/http/ngx_http_header_filter_module.c b/src/http/ngx_http_header_filter_module.c
+--- a/src/http/ngx_http_header_filter_module.c	2015-07-14 17:46:06.000000000 +0100
++++ b/src/http/ngx_http_header_filter_module.c	2015-12-01 20:59:13.224019018 +0000
+@@ -46,8 +46,8 @@
+ };
+ 
+ 
+-static char ngx_http_server_string[] = "Server: nginx" CRLF;
+-static char ngx_http_server_full_string[] = "Server: " NGINX_VER CRLF;
++static char ngx_http_server_string[] = "" CRLF;
++static char ngx_http_server_full_string[] = "" CRLF;
+ 
+ 
+ static ngx_str_t ngx_http_status_lines[] = {
+diff -Naur a/src/http/ngx_http_spdy_filter_module.c b/src/http/ngx_http_spdy_filter_module.c
+--- a/src/http/ngx_http_spdy_filter_module.c	2015-07-14 17:46:07.000000000 +0100
++++ b/src/http/ngx_http_spdy_filter_module.c	2015-12-01 20:17:25.039017822 +0000
+@@ -178,7 +178,7 @@
+     if (r->headers_out.server == NULL) {
+         len += ngx_http_spdy_nv_nsize("server");
+         len += clcf->server_tokens ? ngx_http_spdy_nv_vsize(NGINX_VER)
+-                                   : ngx_http_spdy_nv_vsize("nginx");
++                                   : ngx_http_spdy_nv_vsize("none");
+     }
+ 
+     if (r->headers_out.date == NULL) {
+@@ -330,7 +330,7 @@
+         last = ngx_http_spdy_nv_write_name(last, "server");
+         last = clcf->server_tokens
+                ? ngx_http_spdy_nv_write_val(last, NGINX_VER)
+-               : ngx_http_spdy_nv_write_val(last, "nginx");
++               : ngx_http_spdy_nv_write_val(last, "none");
+ 
+         count++;
+     }
